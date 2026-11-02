@@ -1,10 +1,10 @@
 package aed.tp2;
 
 public class Usuarios implements Comparable<Usuarios>{
-    private int usuarioId;
+    public int usuarioId;
     public double millasTotales;
     public double millasDisponibles;
-    private double canjeadas; // canjeadas y transferidas
+    public double canjeadas; // canjeadas y transferidas
     private int contacto; // a quien transfirio o de quien recibio
     private boolean multiplesContactos; //le transfirio/recibio a varios 
 
@@ -18,8 +18,7 @@ public class Usuarios implements Comparable<Usuarios>{
         this.contacto = -1;
     }
 
-   
-    // Si empatan, "gana" el de id menor.
+
     public int compareTo(Usuarios otro) {
         if (this.millasDisponibles > otro.millasDisponibles) {
             return 1;
