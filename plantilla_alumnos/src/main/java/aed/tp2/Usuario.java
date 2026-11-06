@@ -1,6 +1,6 @@
 package aed.tp2;
 
-public class Usuarios implements Comparable<Usuarios>{
+public class Usuario implements Comparable<Usuario>{
     public int usuarioId;
     public double millasTotales;
     public double millasDisponibles;
@@ -9,7 +9,7 @@ public class Usuarios implements Comparable<Usuarios>{
     private boolean multiplesContactos; //le transfirio/recibio a varios 
 
 
-    public Usuarios(int usuarioId) {
+    public Usuario(int usuarioId) {
         this.usuarioId = usuarioId;
         this.millasTotales = 0;
         this.millasDisponibles = 0;
@@ -19,7 +19,7 @@ public class Usuarios implements Comparable<Usuarios>{
     }
 
 
-    public int compareTo(Usuarios otro) {
+    public int compareTo(Usuario otro) {
         if (this.millasDisponibles > otro.millasDisponibles) {
             return 1;
         }
@@ -65,7 +65,7 @@ public class Usuarios implements Comparable<Usuarios>{
         }
     }
 
-    public void agregarContacto(Usuarios otro) {
+    public void agregarContacto(Usuario otro) {
         if (contacto == -1) {
             contacto = otro.usuarioId;
         } 
@@ -74,7 +74,7 @@ public class Usuarios implements Comparable<Usuarios>{
         }
     }
 
-    public boolean exclusivoCon(Usuarios otro) {
+    public boolean exclusivoCon(Usuario otro) {
         return contacto == -1 && !multiplesContactos && contacto == otro.usuarioId;
     }
 }

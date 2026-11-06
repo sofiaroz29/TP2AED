@@ -1,28 +1,28 @@
 package aed.tp2;
 
 public class AirMiles implements SistemaAirMiles {
-    private ABB<Integer, Usuarios> usuarios;   
+    private ABB<Integer, Usuario> dictUsuarios;   
     private ABB<String, Promociones> promos;     
-    private Usuarios maxAcumulador;            // el que más totales tiene
-    private Usuarios maxCanjeador;             // el que más gastadas tiene
+    private Usuario maxAcumulador;            // el que más totales tiene
+    private Usuario maxCanjeador;             // el que más gastadas tiene
 
     public AirMiles() {
-        usuarios = new ABB<>();
-        promos = new ABB<>(); // o trie? pq con abb no cumple la complejidad
+        dictUsuarios = new ABB<>();
+        promos = new ABB<>(); 
 
         promos.insertar("NoPromo", new Promociones("NoPromo", 1, 0));
     }
 
 
     public void registrarUsuario(int id) {
-        Usuarios u = new Usuarios(id);  
-        usuarios.insertar(id, u);              
+        Usuario u = new Usuario(id);  
+        dictUsuarios.insertar(id, u);              
     }
 
     public void registrarUsuarioConReferidor(int id, int ref) {
         registrarUsuario(id);          
-        Usuarios nuevo = usuarios.obtener(id);
-        Usuarios referidor = usuarios.obtener(ref);
+        Usuario nuevo = dictUsuarios.obtener(id);
+        Usuario referidor = dictUsuarios.obtener(ref);
 
         nuevo.millasTotales = nuevo.millasTotales + 500;
         nuevo.millasDisponibles = nuevo.millasDisponibles + 500;
@@ -32,8 +32,8 @@ public class AirMiles implements SistemaAirMiles {
     }
 
     public void acumularMillas(int id, double distancia, String nombrePromo) {
-        Usuarios user = usuarios.obtener(id);
-        Promociones promo = promos.obtener(nombrePromo);
+        Usuario user = dictUsuarios.obtener(id);
+        Promociones promo = promos.obtener(nombrePromo);  
 
 
         double factorPromo;
@@ -62,7 +62,7 @@ public class AirMiles implements SistemaAirMiles {
     }
 
     public void canjearMillas(int id, double cantidad) {
-        Usuarios user = usuarios.obtener(id);
+        Usuario user = dictUsuarios.obtener(id);
 
         user.millasDisponibles = user.millasDisponibles - cantidad;   
         user.millasTotales = user.canjeadas + cantidad;        
@@ -75,12 +75,12 @@ public class AirMiles implements SistemaAirMiles {
     }
 
     public void transferirMillas(int origen, int destino, double cantidad) {
-        Usuarios userOrigen = usuarios.obtener(origen);
-        Usuarios userDestino = usuarios.obtener(destino);
+        Usuario userOrigen = dictUsuarios.obtener(origen);
+        Usuario userDestino = dictUsuarios.obtener(destino);
 
         // if (userOrigen.millasDisponibles < cantidad){
         //     throw new Error();
-        // }
+        // } ????
 
         userOrigen.millasDisponibles = userOrigen.millasDisponibles - cantidad;
         userOrigen.canjeadas = userOrigen.canjeadas + cantidad;
@@ -94,17 +94,17 @@ public class AirMiles implements SistemaAirMiles {
         if (userDestino.millasTotales > maxAcumulador.millasTotales) {
             maxCanjeador = userDestino;
         }
-        //throw new UnsupportedOperationException("Sin implementar");
+        
     }
 
     public double consultarSaldo(int id) {
-        Usuarios user = usuarios.obtener(id);
+        Usuario user = dictUsuarios.obtener(id);
         return user.millasDisponibles;
-       //throw new UnsupportedOperationException("Sin implementar");
+       
     }
 
     public String consultarCategoria(int id) {
-        Usuarios user = usuarios.obtener(id);
+        Usuario user = dictUsuarios.obtener(id);
         return user.categoria();
     }
 
