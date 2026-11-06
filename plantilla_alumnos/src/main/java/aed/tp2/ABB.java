@@ -88,7 +88,7 @@ public class ABB <C extends Comparable<C>, V>{
                 }
             }
             else{
-                _actual.valor = valor;   // la clave ya estaba: reemplazo el valor
+                _actual.valor = valor;   
                 listo = true;
             }
         }

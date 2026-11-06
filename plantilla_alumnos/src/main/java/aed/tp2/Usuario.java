@@ -5,8 +5,8 @@ public class Usuario implements Comparable<Usuario>{
     public double millasTotales;
     public double millasDisponibles;
     public double canjeadas; // canjeadas y transferidas
-    private int contacto; // a quien transfirio o de quien recibio
-    private boolean multiplesContactos; //le transfirio/recibio a varios 
+    public  Usuario contacto; // a quien transfirio o de quien recibio
+    public  boolean multiplesContactos; //le transfirio/recibio a varios 
 
 
     public Usuario(int usuarioId) {
@@ -15,7 +15,7 @@ public class Usuario implements Comparable<Usuario>{
         this.millasDisponibles = 0;
         this.canjeadas = 0;
         this.multiplesContactos = false;
-        this.contacto = -1;
+        this.contacto = null;
     }
 
 
@@ -66,15 +66,15 @@ public class Usuario implements Comparable<Usuario>{
     }
 
     public void agregarContacto(Usuario otro) {
-        if (contacto == -1) {
-            contacto = otro.usuarioId;
+        if (contacto == null) {
+            contacto = otro;
         } 
-        else if (contacto != otro.usuarioId) {
+        else if (contacto != otro) {
             multiplesContactos = true; 
         }
     }
 
-    public boolean exclusivoCon(Usuario otro) {
-        return contacto == -1 && !multiplesContactos && contacto == otro.usuarioId;
+   public boolean exclusivoCon(Usuario otro) {
+    return !multiplesContactos && !otro.multiplesContactos && contacto == otro &&  otro.contacto == this;
     }
 }

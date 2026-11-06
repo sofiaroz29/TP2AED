@@ -2,21 +2,33 @@ package aed.tp2;
 
 public class AirMiles implements SistemaAirMiles {
     private ABB<Integer, Usuario> dictUsuarios;   
-    private ABB<String, Promociones> promos;     
+    private Trie<Promocion> promos;     
     private Usuario maxAcumulador;            // el que más totales tiene
     private Usuario maxCanjeador;             // el que más gastadas tiene
+    private ListaEnlazada<Usuario> usuarios;
 
     public AirMiles() {
         dictUsuarios = new ABB<>();
-        promos = new ABB<>(); 
-
-        promos.insertar("NoPromo", new Promociones("NoPromo", 1, 0));
+        usuarios = new ListaEnlazada<>();
+        promos = new Trie<>(); 
+        maxAcumulador = null;
+        maxCanjeador = null;
+        promos.insertar("NoPromo", new Promocion(1, 0));
     }
 
 
     public void registrarUsuario(int id) {
         Usuario u = new Usuario(id);  
-        dictUsuarios.insertar(id, u);              
+        dictUsuarios.insertar(id, u);
+        usuarios.agregarAtras(u);     
+        
+        if (maxAcumulador == null) {
+            maxAcumulador = u;
+        }
+
+        if (maxCanjeador == null) {
+            maxCanjeador = u;
+        }
     }
 
     public void registrarUsuarioConReferidor(int id, int ref) {
@@ -33,7 +45,7 @@ public class AirMiles implements SistemaAirMiles {
 
     public void acumularMillas(int id, double distancia, String nombrePromo) {
         Usuario user = dictUsuarios.obtener(id);
-        Promociones promo = promos.obtener(nombrePromo);  
+        Promocion promo = promos.obtener(nombrePromo);  
 
 
         double factorPromo;
@@ -87,6 +99,27 @@ public class AirMiles implements SistemaAirMiles {
         userDestino.millasDisponibles = userDestino.millasDisponibles + cantidad;
         userDestino.millasTotales = userDestino.millasTotales + cantidad;
 
+        
+        // if (userOrigen.multiplesContactos == false && userOrigen.contacto != destino && userOrigen.contacto != -1){
+        //     userOrigen.multiplesContactos = true;
+        // }
+
+        // if (userOrigen.contacto == -1){
+        //     userOrigen.contacto = destino;
+        // }
+
+        // if (userDestino.multiplesContactos == false && userDestino.contacto != origen && userDestino.contacto != -1){
+        //     userDestino.multiplesContactos = true;
+        // }
+
+        // if (userDestino.contacto == -1){
+        //     userDestino.contacto = origen;
+        // }
+
+        userOrigen.agregarContacto(userDestino);
+        userDestino.agregarContacto(userOrigen);
+
+
         if (userOrigen.canjeadas > maxCanjeador.canjeadas) {
             maxCanjeador = userOrigen;
         }
@@ -94,6 +127,7 @@ public class AirMiles implements SistemaAirMiles {
         if (userDestino.millasTotales > maxAcumulador.millasTotales) {
             maxCanjeador = userDestino;
         }
+
         
     }
 
@@ -114,28 +148,49 @@ public class AirMiles implements SistemaAirMiles {
     }
 
     public void iniciarPromocion(String nombre, double factor) {
-        throw new UnsupportedOperationException("Sin implementar");
+        promos.insertar(nombre, new Promocion(factor, 0)); 
     }
 
     public void iniciarPromocionConTope(String nombre, double factor, double tope) {
-        throw new UnsupportedOperationException("Sin implementar");
+        promos.insertar(nombre, new Promocion(factor, tope));
     }
 
     public void finalizarPromocion(String nombre) {
-        throw new UnsupportedOperationException("Sin implementar");
+        promos.obtener(nombre).activa = false;
     }
 
     public int elMasAcumulador() {
         return maxAcumulador.usuarioId;
-        //throw new UnsupportedOperationException("Sin implementar");
     }
 
     public int elMasCanjeador() {
         return maxCanjeador.usuarioId;
-        //throw new UnsupportedOperationException("Sin implementar");
     }
 
-    public int[][] paresTransferidoresExclusivos() { 
-        throw new UnsupportedOperationException("Sin implementar");
+    public int[][] paresTransferidoresExclusivos() {
+        int[][] resultado = new int[usuarios.longitud() / 2][2];
+        int cantidad = 0;
+
+        ListaEnlazada<Usuario>.ListaIterador it = usuarios.iterador();
+
+        while (it.haySiguiente()) {
+            Usuario u = it.siguiente();
+
+            if (u.contacto != null && u.usuarioId < u.contacto.usuarioId &&u.exclusivoCon(u.contacto)) {
+
+                resultado[cantidad][0] = u.usuarioId;
+                resultado[cantidad][1] = u.contacto.usuarioId;
+                cantidad++;
+            }
+        }
+
+        int[][] res = new int[cantidad][2];
+
+        for (int i = 0; i < cantidad; i++) {
+            res[i][0] = resultado[i][0];
+            res[i][1] = resultado[i][1];
+        }
+
+        return res;
     }
 }

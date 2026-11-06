@@ -1,14 +1,13 @@
 package aed.tp2;
 
-public class Promociones {
+public class Promocion {
     String nombre;
     double factor;
     double tope;
     double acumuladas;
     boolean activa;
 
-    public Promociones(String nombre, double factor, double tope) {
-        this.nombre = nombre;
+    public Promocion(double factor, double tope) {
         this.factor = factor;
         this.tope = tope;
         this.acumuladas = 0;
