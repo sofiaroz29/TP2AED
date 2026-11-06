@@ -19,12 +19,19 @@ public class MaxHeap <T extends Comparable<T>>{
             return valor;
         }
 
-        public void modificar(){
-            
+        public void modificar(T nuevoValor){
+            T anterior = valor;
+            valor = nuevoValor;
+
+            if (nuevoValor.compareTo(anterior) > 0) {
+                siftUp(indice);
+            } else {
+                siftDown(indice);
+            }
         }
 
         public boolean equals(Handle<T> h){
-            
+            return this == h;
         }
 
     }
@@ -41,14 +48,14 @@ public class MaxHeap <T extends Comparable<T>>{
     } 
 
     private int der(int i){
-        return 2*i+1;
+        return 2*i+2;
     }  
 
     public Handle <T> agregar (T valor){
         //fijarnos que posicion esta libre --> cant elementos +1
         //agregar
         //siftupear
-        Handle <T> h = new Handle<T>(heap.size()-1, valor) ;
+        Handle <T> h = new Handle<T>(heap.size(), valor) ;
         heap.add(h);
         siftUp(heap.size()-1);
         return h;
@@ -56,31 +63,60 @@ public class MaxHeap <T extends Comparable<T>>{
 
     public void siftUp(int i){
 
-        int padreIndice = padre(heap.size()-1);
-        int indiceValor= i;
-        Handle padre= heap.get(padreIndice);
-        Handle actual = heap.get(i);
+        int indiceValor = i;
 
+        while (indiceValor > 0) {
+            int padreIndice = padre(indiceValor);
 
-        while (padre.valor.compareTo(actual.valor) < 0){
-                
-            heap.set(padreIndice, valor);
-            heap.set(indiceValor, padre);
+            Handle actual = heap.get(indiceValor);
+            Handle padre = heap.get(padreIndice);
 
-            indiceValor= padreIndice;
-            padreIndice=padre(padreIndice);
-            padre=heap.get(padreIndice);
+            if (actual.valor.compareTo(padre.valor) > 0) {
+                heap.set(padreIndice, actual);
+                heap.set(indiceValor, padre);
+
+                actual.indice = padreIndice;
+                padre.indice = indiceValor;
+                indiceValor = padreIndice;
+            } 
+            else {
+                break;
+            }
         }
-
     }
 
     public T maximo (){
         return heap.get(0);
     }
 
-    // public void siftDown(int i, T valor){
-    //     heap.set (i, valor);
-    // }
+    public void siftDown(int i) {
+
+        int indiceValor = i;
+        int hijoIzq = izq(i);
+        int hijoDer = der(i);
+    
+        if (hijoIzq < heap.size() && heap.get(hijoIzq).valor.compareTo(heap.get(indiceValor).valor) > 0) {
+            indiceValor = hijoIzq;
+        }
+    
+        if (hijoDer < heap.size() && heap.get(hijoDer).valor.compareTo(heap.get(indiceValor).valor) > 0) {
+            indiceValor = hijoDer;
+        }
+    
+        if (indiceValor != i) {
+    
+            Handle actual = heap.get(i);
+            Handle hijo = heap.get(indiceValor);
+    
+            heap.set(i, hijo);
+            heap.set(indicevalor, actual);
+    
+            hijo.indice = i;
+            actual.indice = indiceValor;
+    
+            siftDown(indiceValor);
+        }
+    }
 
 
 
