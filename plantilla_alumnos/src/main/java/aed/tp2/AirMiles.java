@@ -6,6 +6,7 @@ public class AirMiles implements SistemaAirMiles {
     private Usuario maxAcumulador;            // el que más totales tiene
     private Usuario maxCanjeador;             // el que más gastadas tiene
     private ListaEnlazada<Usuario> usuarios;
+    private MaxHeap<Usuario> maxHeap;
 
     public AirMiles() {
         dictUsuarios = new ABB<>();
@@ -13,21 +14,24 @@ public class AirMiles implements SistemaAirMiles {
         promos = new Trie<>(); 
         maxAcumulador = null;
         maxCanjeador = null;
+        maxHeap = new MaxHeap<>();
         promos.insertar("NoPromo", new Promocion(1, 0));
     }
 
 
     public void registrarUsuario(int id) {
-        Usuario u = new Usuario(id);  
-        dictUsuarios.insertar(id, u);
-        usuarios.agregarAtras(u);     
+        Usuario user = new Usuario(id);  
+        dictUsuarios.insertar(id, user);
+        usuarios.agregarAtras(user);
+        u.handleHeap = maxHeap.agregar(user);
+
         
         if (maxAcumulador == null) {
-            maxAcumulador = u;
+            maxAcumulador = user;
         }
 
         if (maxCanjeador == null) {
-            maxCanjeador = u;
+            maxCanjeador = user;
         }
     }
 
@@ -40,6 +44,10 @@ public class AirMiles implements SistemaAirMiles {
         nuevo.millasDisponibles = nuevo.millasDisponibles + 500;
         referidor.millasDisponibles = referidor.millasDisponibles +500;
         referidor.millasTotales = referidor.millasTotales+500;
+
+        nuevo.handleHeap.modificar(nuevo);
+        referidor.handleHeap.modificar(referidor);
+
         
     }
 
@@ -61,6 +69,8 @@ public class AirMiles implements SistemaAirMiles {
         user.millasTotales = user.millasTotales + millas;
         user.millasDisponibles = user.millasDisponibles + millas;
 
+        user.handleHeap.modificar(user);
+
         if (user.millasTotales > maxAcumulador.millasTotales) {
             maxAcumulador = user;
         }
@@ -77,7 +87,9 @@ public class AirMiles implements SistemaAirMiles {
         Usuario user = dictUsuarios.obtener(id);
 
         user.millasDisponibles = user.millasDisponibles - cantidad;   
-        user.millasTotales = user.canjeadas + cantidad;        
+        user.millasTotales = user.canjeadas + cantidad;
+        
+        user.handleHeap.modificar(user);
 
         if (user.canjeadas > maxCanjeador.canjeadas) {
             maxCanjeador = user;
@@ -98,6 +110,8 @@ public class AirMiles implements SistemaAirMiles {
         userOrigen.canjeadas = userOrigen.canjeadas + cantidad;
         userDestino.millasDisponibles = userDestino.millasDisponibles + cantidad;
         userDestino.millasTotales = userDestino.millasTotales + cantidad;
+        
+        user.handleHeap.modificar(user);
 
         
         // if (userOrigen.multiplesContactos == false && userOrigen.contacto != destino && userOrigen.contacto != -1){
