@@ -7,7 +7,7 @@ public class MaxHeap <T extends Comparable<T>>{
     private ArrayList<Handle> heap;
 
 
-   public class Handle <T>{
+   public class Handle {
         private T valor;
         private int indice;
         
@@ -20,14 +20,9 @@ public class MaxHeap <T extends Comparable<T>>{
         }
 
         public void modificar(T nuevoValor){
-            T anterior = valor;
             valor = nuevoValor;
-
-            if (nuevoValor.compareTo(anterior) > 0) {
-                siftUp(indice);
-            } else {
-                siftDown(indice);
-            }
+            siftUp(indice);
+            siftDown(indice);
         }
 
         public boolean equals(Handle<T> h){
@@ -51,11 +46,11 @@ public class MaxHeap <T extends Comparable<T>>{
         return 2*i+2;
     }  
 
-    public Handle <T> agregar (T valor){
+    public Handle agregar (T valor){
         //fijarnos que posicion esta libre --> cant elementos +1
         //agregar
         //siftupear
-        Handle <T> h = new Handle<T>(heap.size(), valor) ;
+        Handle h = new Handle(heap.size(), valor) ;
         heap.add(h);
         siftUp(heap.size()-1);
         return h;
@@ -85,10 +80,6 @@ public class MaxHeap <T extends Comparable<T>>{
         }
     }
 
-    public T maximo (){
-        return heap.get(0);
-    }
-
     public void siftDown(int i) {
 
         int indiceValor = i;
@@ -116,6 +107,10 @@ public class MaxHeap <T extends Comparable<T>>{
     
             siftDown(indiceValor);
         }
+    }
+
+    public T maximo (){
+        //DEVOLVER LOS N MAS GRANDES
     }
 
 
