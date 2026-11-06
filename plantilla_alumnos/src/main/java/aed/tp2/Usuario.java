@@ -8,6 +8,8 @@ public class Usuario implements Comparable<Usuario>{
     public  Usuario contacto; // a quien transfirio o de quien recibio
     public  boolean multiplesContactos; //le transfirio/recibio a varios 
 
+    public MaxHeap<Usuario>.Handle handleHeap;
+
 
     public Usuario(int usuarioId) {
         this.usuarioId = usuarioId;
@@ -16,6 +18,7 @@ public class Usuario implements Comparable<Usuario>{
         this.canjeadas = 0;
         this.multiplesContactos = false;
         this.contacto = null;
+        this.handleHeap = null;
     }
 
 
