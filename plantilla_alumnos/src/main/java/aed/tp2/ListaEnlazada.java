@@ -1,4 +1,7 @@
 package aed.tp2;
+
+import java.util.NoSuchElementException;
+
 public class ListaEnlazada<T> {
     // Completar atributos privados
 
@@ -134,8 +137,6 @@ public class ListaEnlazada<T> {
     }
 
     public class ListaIterador{
-    	// Completar atributos privados
-
         private Nodo actual;
         private Nodo ultimo;
 
@@ -147,21 +148,30 @@ public class ListaEnlazada<T> {
             if (actual == null) {
                 return ultimo != null;
             }
-
             return actual.ant != null;
         }
 
         public T siguiente() {
+            if (actual == null) {
+                throw new NoSuchElementException("No hay siguiente elemento en la lista");
+            }
+
             T resultado = actual.valor;
             actual = actual.sig;
             return resultado;
         }
         
-
         public T anterior() {
             if (actual == null) {
+                if (ultimo == null) {
+                    throw new NoSuchElementException("No hay anterior elemento en la lista");
+                }
                 actual = ultimo;
                 return actual.valor;
+            }
+
+            if (actual.ant == null) {
+                throw new NoSuchElementException("No hay anterior elemento en la lista");
             }
 
             actual = actual.ant;
