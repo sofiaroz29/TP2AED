@@ -5,12 +5,12 @@ public class AirMiles implements SistemaAirMiles {
     private Trie<Promocion> promos;     
     private Usuario maxAcumulador;            // el que más totales tiene
     private Usuario maxCanjeador;             // el que más gastadas tiene
-    private ListaEnlazada<Usuario> usuarios;
+    private ListaEnlazada<Usuario> listaUsuarios;
     private MaxHeap<Usuario> maxHeap;
 
     public AirMiles() {
         dictUsuarios = new ABB<>();
-        usuarios = new ListaEnlazada<>();
+        listaUsuarios = new ListaEnlazada<>();
         promos = new Trie<>(); 
         maxAcumulador = null;
         maxCanjeador = null;
@@ -22,8 +22,8 @@ public class AirMiles implements SistemaAirMiles {
     public void registrarUsuario(int id) {
         Usuario user = new Usuario(id);  
         dictUsuarios.insertar(id, user);
-        usuarios.agregarAtras(user);
-        u.handleHeap = maxHeap.agregar(user);
+        listaUsuarios.agregarAtras(user);
+        user.handleHeap = maxHeap.agregar(user);
 
         
         if (maxAcumulador == null) {
@@ -40,15 +40,21 @@ public class AirMiles implements SistemaAirMiles {
         Usuario nuevo = dictUsuarios.obtener(id);
         Usuario referidor = dictUsuarios.obtener(ref);
 
-        nuevo.millasTotales = nuevo.millasTotales + 500;
-        nuevo.millasDisponibles = nuevo.millasDisponibles + 500;
-        referidor.millasDisponibles = referidor.millasDisponibles +500;
-        referidor.millasTotales = referidor.millasTotales+500;
-
+        nuevo.millasTotales += 500;
+        nuevo.millasDisponibles += 500;
         nuevo.handleHeap.modificar(nuevo);
+
+        referidor.millasTotales += 500;
+        referidor.millasDisponibles += 500;
         referidor.handleHeap.modificar(referidor);
 
-        
+
+        if (nuevo.millasTotales > maxAcumulador.millasTotales) {
+            maxAcumulador = nuevo;
+        }
+        if (referidor.millasTotales > maxAcumulador.millasTotales) {
+            maxAcumulador = referidor;
+        }
     }
 
     public void acumularMillas(int id, double distancia, String nombrePromo) {
@@ -87,7 +93,7 @@ public class AirMiles implements SistemaAirMiles {
         Usuario user = dictUsuarios.obtener(id);
 
         user.millasDisponibles = user.millasDisponibles - cantidad;   
-        user.millasTotales = user.canjeadas + cantidad;
+        user.canjeadas = user.canjeadas + cantidad;
         
         user.handleHeap.modificar(user);
 
@@ -102,33 +108,12 @@ public class AirMiles implements SistemaAirMiles {
         Usuario userOrigen = dictUsuarios.obtener(origen);
         Usuario userDestino = dictUsuarios.obtener(destino);
 
-        // if (userOrigen.millasDisponibles < cantidad){
-        //     throw new Error();
-        // } ????
-
         userOrigen.millasDisponibles = userOrigen.millasDisponibles - cantidad;
         userOrigen.canjeadas = userOrigen.canjeadas + cantidad;
+        userOrigen.handleHeap.modificar(userOrigen);
         userDestino.millasDisponibles = userDestino.millasDisponibles + cantidad;
-        userDestino.millasTotales = userDestino.millasTotales + cantidad;
-        
-        user.handleHeap.modificar(user);
+        userDestino.handleHeap.modificar(userDestino);
 
-        
-        // if (userOrigen.multiplesContactos == false && userOrigen.contacto != destino && userOrigen.contacto != -1){
-        //     userOrigen.multiplesContactos = true;
-        // }
-
-        // if (userOrigen.contacto == -1){
-        //     userOrigen.contacto = destino;
-        // }
-
-        // if (userDestino.multiplesContactos == false && userDestino.contacto != origen && userDestino.contacto != -1){
-        //     userDestino.multiplesContactos = true;
-        // }
-
-        // if (userDestino.contacto == -1){
-        //     userDestino.contacto = origen;
-        // }
 
         userOrigen.agregarContacto(userDestino);
         userDestino.agregarContacto(userOrigen);
@@ -139,7 +124,7 @@ public class AirMiles implements SistemaAirMiles {
         }
 
         if (userDestino.millasTotales > maxAcumulador.millasTotales) {
-            maxCanjeador = userDestino;
+            maxAcumulador = userDestino;
         }
 
         
@@ -157,8 +142,20 @@ public class AirMiles implements SistemaAirMiles {
     }
 
     public int[] rankingMillas(int n) {
-        //heap 
-        throw new UnsupportedOperationException("Sin implementar");
+       MaxHeap<Usuario> copia = maxHeap.copia();
+
+        if (n > copia.longitud()) {
+            n = copia.longitud();
+        }
+
+        int[] rankingN = new int[n];
+
+        for (int i=0; i<n; i++) {
+            Usuario user = copia.eliminarMaximo();
+            rankingN[i] = user.usuarioId;
+        }
+
+        return rankingN;
     }
 
     public void iniciarPromocion(String nombre, double factor) {
@@ -182,29 +179,29 @@ public class AirMiles implements SistemaAirMiles {
     }
 
     public int[][] paresTransferidoresExclusivos() {
-        int[][] resultado = new int[usuarios.longitud() / 2][2];
+        int[][] pares = new int[listaUsuarios.longitud() / 2][2];
         int cantidad = 0;
 
-        ListaEnlazada<Usuario>.ListaIterador it = usuarios.iterador();
+        ListaEnlazada<Usuario>.ListaIterador it = listaUsuarios.iterador();
 
         while (it.haySiguiente()) {
-            Usuario u = it.siguiente();
+            Usuario user = it.siguiente();
 
-            if (u.contacto != null && u.usuarioId < u.contacto.usuarioId &&u.exclusivoCon(u.contacto)) {
+            if (user.contacto != null && user.usuarioId < user.contacto.usuarioId &&user.exclusivoCon(user.contacto)) {
 
-                resultado[cantidad][0] = u.usuarioId;
-                resultado[cantidad][1] = u.contacto.usuarioId;
+                pares[cantidad][0] = user.usuarioId;
+                pares[cantidad][1] = user.contacto.usuarioId;
                 cantidad++;
             }
         }
 
-        int[][] res = new int[cantidad][2];
+        int[][] paresFinal = new int[cantidad][2];
 
         for (int i = 0; i < cantidad; i++) {
-            res[i][0] = resultado[i][0];
-            res[i][1] = resultado[i][1];
+            paresFinal[i][0] = pares[i][0];
+            paresFinal[i][1] = pares[i][1];
         }
 
-        return res;
+        return paresFinal;
     }
 }

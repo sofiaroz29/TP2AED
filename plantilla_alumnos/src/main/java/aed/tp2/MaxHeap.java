@@ -23,9 +23,10 @@ public class MaxHeap <T extends Comparable<T>>{
             valor = nuevoValor;
             siftUp(indice);
             siftDown(indice);
+            
         }
 
-        public boolean equals(Handle<T> h){
+        public boolean equals(Handle h){
             return this == h;
         }
 
@@ -100,7 +101,7 @@ public class MaxHeap <T extends Comparable<T>>{
             Handle hijo = heap.get(indiceValor);
     
             heap.set(i, hijo);
-            heap.set(indicevalor, actual);
+            heap.set(indiceValor, actual);
     
             hijo.indice = i;
             actual.indice = indiceValor;
@@ -109,10 +110,44 @@ public class MaxHeap <T extends Comparable<T>>{
         }
     }
 
-    public T maximo (){
-        //DEVOLVER LOS N MAS GRANDES
+    public T maximo (int i){
+        return heap.get(0).valor;
     }
 
+    public int longitud(){
+        return heap.size();
+    }
+
+
+    public MaxHeap<T> copia() { //asi no modifico el original
+        MaxHeap<T> copia = new MaxHeap<>();
+
+        for (int i = 0; i < heap.size(); i++) {
+            Handle h = heap.get(i);
+            Handle nuevo = copia.new Handle(i, h.valor);
+            copia.heap.add(nuevo);
+        }
+
+        return copia;
+    }
+
+
+    public T eliminarMaximo() {
+        if (heap.size()==0) {
+            return null;
+        }
+
+        Handle max = heap.get(0);
+        Handle ultimo = heap.remove(heap.size()-1);
+
+        if (heap.size() > 0) {
+            heap.set(0, ultimo);
+            ultimo.indice= 0;
+            siftDown(0);
+        }
+
+        return max.valor;
+    }
 
 
 

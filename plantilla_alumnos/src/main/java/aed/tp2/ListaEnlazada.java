@@ -16,7 +16,6 @@ public class ListaEnlazada<T> {
     public ListaEnlazada() {
         primero = null;
         ultimo = null;
-        //throw new UnsupportedOperationException("No implementada aun");
     }
 
     public int longitud() {
@@ -28,7 +27,6 @@ public class ListaEnlazada<T> {
         }
 
         return contador; 
-        //throw new UnsupportedOperationException("No implementada aun");
     }
 
     public void agregarAdelante(T elem) {
@@ -42,7 +40,6 @@ public class ListaEnlazada<T> {
             primero.ant = nuevo;
             primero = nuevo;
         }
-        //throw new UnsupportedOperationException("No implementada aun");
     }
 
     public void agregarAtras(T elem) {
@@ -56,7 +53,6 @@ public class ListaEnlazada<T> {
             nuevo.ant = ultimo;
             ultimo = nuevo;
         }
-        //throw new UnsupportedOperationException("No implementada aun");
     }
 
     public T obtener(int i) {
@@ -68,7 +64,6 @@ public class ListaEnlazada<T> {
         }
         return actual.valor;
 
-        //throw new UnsupportedOperationException("No implementada aun");
     }
 
     public void eliminar(int i) {
@@ -99,7 +94,6 @@ public class ListaEnlazada<T> {
             }
         }
 
-        //throw new UnsupportedOperationException("No implementada aun");
     }
 
     public void modificarPosicion(int indice, T elem) {
@@ -112,7 +106,6 @@ public class ListaEnlazada<T> {
         }
 
         actual.valor = elem;
-        //throw new UnsupportedOperationException("No implementada aun");
     }
 
     public ListaEnlazada(ListaEnlazada<T> lista) {
@@ -122,7 +115,6 @@ public class ListaEnlazada<T> {
             agregarAtras(actual.valor);
             actual = actual.sig;
         }
-        //throw new UnsupportedOperationException("No implementada aun");
     }
     
     @Override
@@ -139,7 +131,6 @@ public class ListaEnlazada<T> {
         result = result + "]";
 
         return result;
-        //throw new UnsupportedOperationException("No implementada aun");
     }
 
     public class ListaIterador{
@@ -150,7 +141,6 @@ public class ListaEnlazada<T> {
 
         public boolean haySiguiente() {
             return actual != null;
-	        //throw new UnsupportedOperationException("No implementada aun");
         }
         
         public boolean hayAnterior() {
@@ -159,14 +149,12 @@ public class ListaEnlazada<T> {
             }
 
             return actual.ant != null;
-	        //throw new UnsupportedOperationException("No implementada aun");
         }
 
         public T siguiente() {
             T resultado = actual.valor;
             actual = actual.sig;
             return resultado;
-	        //throw new UnsupportedOperationException("No implementada aun");
         }
         
 
@@ -178,7 +166,6 @@ public class ListaEnlazada<T> {
 
             actual = actual.ant;
             return actual.valor;
-	        //throw new UnsupportedOperationException("No implementada aun");
         }
     }
 
@@ -187,7 +174,6 @@ public class ListaEnlazada<T> {
         it.actual = primero;
         it.ultimo = ultimo;
         return it;
-	    //throw new UnsupportedOperationException("No implementada aun");
     }
 
 }
