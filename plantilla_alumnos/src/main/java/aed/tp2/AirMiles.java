@@ -27,7 +27,7 @@ public class AirMiles implements SistemaAirMiles {
         Usuario user = new Usuario(id);                      // O(1)
         dictUsuarios.insertar(id, user);                     // O(log U) prom, O(U) peor (ABB desbalanceado)
         listaUsuarios.agregarAtras(user);                    // O(1)
-        user.handleHeap = maxHeap.agregar(user);             // O(log U) (siempre, el heap está balanceado)
+        user.handleHeap = maxHeap.agregar(user);             // O(log U) (el heap siempre esta balanceado asi que la complejidad es igual en todos los casos)
 
         if (maxAcumulador == null) {                         // O(1)
             maxAcumulador = user;                            // O(1)
@@ -186,7 +186,7 @@ public class AirMiles implements SistemaAirMiles {
     // Requiere: O(|L|)
     // Nuestro codigo da: O(|L|)
     public void finalizarPromocion(String nombre) {
-        promos.obtener(nombre).activa = false;               // O(|L|) la búsqueda + O(1) la asignación
+        promos.obtener(nombre).activa = false;               // O(|L|) la búsqueda + O(1) la asignacion
     }
 
     // Requiere: O(1)
