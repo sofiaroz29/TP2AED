@@ -186,7 +186,7 @@ public class AirMiles implements SistemaAirMiles {
     // Requiere: O(|L|)
     // Nuestro codigo da: O(|L|)
     public void finalizarPromocion(String nombre) {
-        promos.obtener(nombre).activa = false;               // O(|L|) la búsqueda + O(1) la asignacion
+        promos.eliminar(nombre);              // O(|L|) la busqueda
     }
 
     // Requiere: O(1)
