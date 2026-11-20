@@ -1,76 +1,187 @@
 package aed.tp2;
 
+import java.util.NoSuchElementException;
 
-public class Trie <T>{
-    private Nodo raiz;
-    private int cardinal;
+public class ListaEnlazada<T> {
+
+    private Nodo primero;
+    private Nodo ultimo;
 
     private class Nodo {
-        private char letra;
-        private T valor;
-        private Nodo hijo;
-        private Nodo hermano;
+        T valor;
+        Nodo sig;
+        Nodo ant;
+        Nodo(T v) { valor = v; }
+    }
 
-        public Nodo(char letra) {
-            this.letra = letra;
-            this.valor = null;
-            this.hijo = null;
-            this.hermano = null;
+    public ListaEnlazada() {
+        primero = null;
+        ultimo = null;
+    }
+
+    public int longitud() {
+        int contador = 0;
+        Nodo actual = primero; 
+        while (actual != null) {
+            contador++;             
+            actual = actual.sig;
+        }
+
+        return contador; 
+    }
+
+    public void agregarAdelante(T elem) {
+        Nodo nuevo = new Nodo(elem);
+        if (primero == null){
+            primero = nuevo;
+            ultimo = nuevo;
+        }
+        else {
+            nuevo.sig = primero;
+            primero.ant = nuevo;
+            primero = nuevo;
         }
     }
 
-    public Trie() {
-        this.raiz = new Nodo(' ');
-        this.cardinal = 0;
+    public void agregarAtras(T elem) {
+        Nodo nuevo = new Nodo(elem);
+        if (primero == null){
+            primero = nuevo;
+            ultimo = nuevo;
+        }
+        else {
+            ultimo.sig = nuevo;
+            nuevo.ant = ultimo;
+            ultimo = nuevo;
+        }
     }
 
-    public int cardinal() {
-        return cardinal;
+    public T obtener(int i) {
+
+        Nodo actual = primero;
+
+        for (int j = 0; j<i; j++){
+            actual = actual.sig;
+        }
+        return actual.valor;
+
     }
 
-    private Nodo buscarHijo(Nodo padre, char letra){
-        Nodo actual = padre.hijo;
-        while(actual != null){
-            if(actual.letra == letra){
-                return actual;
+    public void eliminar(int i) {
+        Nodo actual = primero;
+        Nodo prev = primero;
+        for (int j = 0; j < i; j++) {
+            prev = actual;
+            actual = actual.sig;
+        }
+        if (i == 0) {
+            primero = actual.sig;
+            if (primero != null) {
+                primero.ant = null;
+            } 
+            else {
+                ultimo = null; 
             }
-            actual = actual.hermano;
-        }
-        return null;
-    }
-
-    public void insertar(String clave, T valor){
-        Nodo actual = raiz;
-        for(int i = 0; i < clave.length(); i++){
-            char letra = clave.charAt(i);
-            Nodo siguiente = buscarHijo(actual, letra);
-            if(siguiente == null){
-                siguiente = new Nodo(letra);
-                siguiente.hermano = actual.hijo;
-                actual.hijo = siguiente;
-            }
-            actual = siguiente;
-        }
-
-        if(actual.valor == null){
-            cardinal += 1;
-        }
-        actual.valor = valor;
-    }
-
-  
-    public T obtener(String clave){
-        Nodo actual = raiz;
-        for(int i = 0; i < clave.length(); i++){
-            actual = buscarHijo(actual, clave.charAt(i));
-            if(actual == null){
-                return null;
+        } 
+        
+        else {
+            prev.sig = actual.sig;
+            if (actual.sig != null) {
+                actual.sig.ant = prev;
+            } 
+            
+            else {
+                ultimo = prev; 
             }
         }
-        return actual.valor; 
+
     }
 
-    public boolean pertenece(String clave){
-        return obtener(clave) != null;
+    public void modificarPosicion(int indice, T elem) {
+        Nodo actual = primero;
+        for (int j = 0; j < indice; j++){
+            if (actual != null){
+                actual = actual.sig;
+            }
+
+        }
+
+        actual.valor = elem;
     }
+
+    public ListaEnlazada(ListaEnlazada<T> lista) {
+
+        Nodo actual = lista.primero;
+        while (actual != null) {
+            agregarAtras(actual.valor);
+            actual = actual.sig;
+        }
+    }
+    
+    @Override
+    public String toString() {
+        String result = "[";
+        Nodo actual = primero;
+        while (actual!=null){
+            result = result+actual.valor.toString();
+            if (actual.sig != null){
+                result= result +  ", ";
+            }
+            actual = actual.sig;
+        }
+        result = result + "]";
+
+        return result;
+    }
+
+    public class ListaIterador{
+        private Nodo actual;
+        private Nodo ultimo;
+
+        public boolean haySiguiente() {
+            return actual != null;
+        }
+        
+        public boolean hayAnterior() {
+            if (actual == null) {
+                return ultimo != null;
+            }
+            return actual.ant != null;
+        }
+
+        public T siguiente() {
+            if (actual == null) {
+                throw new NoSuchElementException("No hay siguiente elemento en la lista");
+            }
+
+            T resultado = actual.valor;
+            actual = actual.sig;
+            return resultado;
+        }
+        
+        public T anterior() {
+            if (actual == null) {
+                if (ultimo == null) {
+                    throw new NoSuchElementException("No hay anterior elemento en la lista");
+                }
+                actual = ultimo;
+                return actual.valor;
+            }
+
+            if (actual.ant == null) {
+                throw new NoSuchElementException("No hay anterior elemento en la lista");
+            }
+
+            actual = actual.ant;
+            return actual.valor;
+        }
+    }
+
+    public ListaIterador iterador() {
+        ListaIterador it = new ListaIterador();
+        it.actual = primero;
+        it.ultimo = ultimo;
+        return it;
+    }
+
 }
